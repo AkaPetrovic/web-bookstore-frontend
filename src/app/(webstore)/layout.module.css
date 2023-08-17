@@ -1,0 +1,5 @@
+.contentContainer {
+  position: relative;
+  flex-grow: 1;
+  margin: 20rem 0 5rem;
+}

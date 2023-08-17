@@ -1,7 +1,4 @@
-// "use client";
-
 import styles from "./page.module.css";
-// import useSWR from "swr";
 
 async function getData(bookId) {
   const res = await fetch(
@@ -16,26 +13,7 @@ async function getData(bookId) {
 }
 
 async function SearchIndividualBookPage({ params }) {
-  // const fetcher = (url, method = "GET", data = null) => {
-  //   const options = {
-  //     method,
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: data ? JSON.stringify(data) : null,
-  //   };
-
-  //   return fetch(url, options).then((res) => res.json());
-  // };
-
-  // const { data, error, isLoading } = useSWR(
-  //   `https://www.googleapis.com/books/v1/volumes/${params.bookId}`,
-  //   fetcher
-  // );
-
   const data = await getData(params.bookId);
-
-  console.log(data);
 
   return (
     <main className={styles.container}>

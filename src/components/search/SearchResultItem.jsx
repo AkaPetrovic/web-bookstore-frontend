@@ -1,7 +1,7 @@
 import Link from "next/link";
 import styles from "./SearchResultItem.module.css";
 
-function SearchResultItem({ title, subtitle, authors, id }) {
+function SearchResultItem({ title, subtitle, id }) {
   return (
     <div className={styles.container}>
       <Link className={styles.linkTitle} href={`/search/${id}`}>

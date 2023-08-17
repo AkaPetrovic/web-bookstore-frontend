@@ -1,0 +1,85 @@
+.container {
+  background-color: white;
+  width: 80%;
+  margin: 3rem auto 0;
+  padding: 2rem;
+  border-radius: 0.5rem;
+}
+
+.options {
+  display: flex;
+  justify-content: flex-end;
+  gap: 2rem;
+}
+
+.addNewLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.icon {
+  width: 1.6rem;
+  cursor: pointer;
+  color: black;
+}
+
+.sortingDropDown {
+  position: relative;
+}
+
+.selectedOption,
+.option {
+  padding: 0.5rem 2rem;
+  cursor: pointer;
+}
+
+.selectedOption {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  border: 2px solid #111;
+  width: 25rem;
+}
+
+.otherOptions {
+  position: absolute;
+  border-top: none;
+  width: 25rem;
+  overflow: hidden;
+}
+
+.option {
+  background-color: white;
+  border-left: 2px solid #111;
+  border-right: 2px solid #111;
+  transform: translateY(-20rem);
+  transition: transform 0.3s ease-in-out;
+}
+
+.option:hover {
+  background-color: #111;
+  color: white;
+}
+
+.lastOption {
+  border-bottom: 2px solid #111;
+}
+
+.items {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 7rem 0 0 0;
+  gap: 2rem;
+}
+
+.book {
+  border: 1px solid black;
+  width: 25rem;
+  height: 35rem;
+}
+
+.open {
+  transform: translateY(0);
+}

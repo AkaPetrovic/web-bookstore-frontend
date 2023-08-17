@@ -8,12 +8,8 @@ function Hero() {
   const [showTitle, setShowTitle] = useState(false);
 
   useEffect(() => {
-    setShowTitle(!showTitle);
+    setShowTitle((prev) => !prev);
   }, []);
-
-  function setShowTitleHandler() {
-    setShowTitle(!showTitle);
-  }
 
   return (
     <div className={styles.container}>

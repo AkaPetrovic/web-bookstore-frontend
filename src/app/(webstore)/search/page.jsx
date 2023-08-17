@@ -36,7 +36,7 @@ export default function Search() {
   }, [isLoading, data]);
 
   function handleBorderToggle() {
-    setDivVisible(!divVisible);
+    setDivVisible((prev) => !prev);
   }
 
   function handleInputChange(event) {
