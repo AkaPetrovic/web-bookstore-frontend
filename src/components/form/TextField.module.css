@@ -12,6 +12,15 @@
   background-color: transparent;
 }
 
+.numberTextField::-webkit-outer-spin-button,
+.numberTextField::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input.numberTextField[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .label {
   z-index: 1;
   display: block;

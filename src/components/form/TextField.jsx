@@ -3,9 +3,8 @@
 import styles from "./TextField.module.css";
 import { useState } from "react";
 
-function TextField({ labelText, type }) {
+function TextField({ labelText, type, inputValue, updateFunction }) {
   const [inputFieldIsFocused, setInputFieldIsFocused] = useState(false);
-  const [inputValue, setInputValue] = useState("");
 
   return (
     <>
@@ -21,12 +20,16 @@ function TextField({ labelText, type }) {
         {labelText}
       </label>
       <input
-        className={styles.textField}
+        className={
+          type === "number"
+            ? `${styles.textField} ${styles.numberTextField}`
+            : styles.textField
+        }
         type={type}
         value={inputValue}
         onFocus={() => setInputFieldIsFocused((prev) => !prev)}
         onBlur={() => setInputFieldIsFocused((prev) => !prev)}
-        onChange={(event) => setInputValue(event.target.value)}
+        onChange={(event) => updateFunction(event.target.value)}
       />
     </>
   );

@@ -11,6 +11,7 @@ function SearchResultList({ books }) {
               subtitle={item.volumeInfo.subtitle}
               key={item.id}
               id={item.id}
+              publishedDate={item.volumeInfo.publishedDate}
             />
           ))
         : ""}

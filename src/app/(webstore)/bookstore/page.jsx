@@ -2,8 +2,7 @@
 
 import styles from "./page.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown, faCirclePlus } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
+import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 
 export default function Bookstore() {
@@ -77,11 +76,6 @@ export default function Bookstore() {
     <main className={styles.container}>
       {/* Button for adding a new book */}
       <div className={styles.options}>
-        <Link href="/bookstore/add-new-book" className={styles.addNewLink}>
-          <FontAwesomeIcon icon={faCirclePlus} className={styles.icon} />
-          <p>Add new book</p>
-        </Link>
-
         {/* Drop down menu */}
         <div className={styles.sortingDropDown}>
           <div
