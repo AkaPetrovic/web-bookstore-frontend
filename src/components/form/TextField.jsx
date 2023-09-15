@@ -3,7 +3,7 @@
 import styles from "./TextField.module.css";
 import { useState } from "react";
 
-function TextField({ labelText, type, inputValue, updateFunction }) {
+function TextField({ labelText, type, inputValue, updateFunction, name }) {
   const [inputFieldIsFocused, setInputFieldIsFocused] = useState(false);
 
   return (
@@ -25,11 +25,14 @@ function TextField({ labelText, type, inputValue, updateFunction }) {
             ? `${styles.textField} ${styles.numberTextField}`
             : styles.textField
         }
+        name={name}
         type={type}
         value={inputValue}
         onFocus={() => setInputFieldIsFocused((prev) => !prev)}
         onBlur={() => setInputFieldIsFocused((prev) => !prev)}
-        onChange={(event) => updateFunction(event.target.value)}
+        onChange={(event) =>
+          updateFunction(event.target.name, event.target.value)
+        }
       />
     </>
   );

@@ -11,12 +11,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import useSWR from "swr";
 import TextField from "@/components/form/TextField";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function SearchIndividualBookPage({ params }) {
-  const [priceValue, setPriceValue] = useState("");
-  const [amount, setAmount] = useState(1);
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
+  const [book, setBook] = useState(null);
 
   const fetcher = (url, method = "GET", data = null) => {
     const options = {
@@ -35,16 +34,39 @@ function SearchIndividualBookPage({ params }) {
     fetcher
   );
 
-  function increaseAmount() {
-    setAmount((prev) => prev + 1);
+  useEffect(() => {
+    if (data && book === null) {
+      const authors = data.volumeInfo.authors.join(", ");
+
+      setBook({
+        name: data.volumeInfo.title,
+        authors: authors,
+        published_date: data.volumeInfo.publishedDate,
+        cover: data.volumeInfo.imageLinks.smallThumbnail,
+        gbooks_id: data.id,
+        price: "",
+        amount: 1,
+      });
+    }
+  }, [data]);
+
+  async function addBook(url) {
+    console.log(book);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(book),
+    });
+
+    const responseData = await response.json();
+
+    console.log(responseData);
   }
 
-  function decreaseAmount() {
-    if (amount > 1) setAmount((prev) => prev - 1);
-  }
-
-  function handlePriceChange(value) {
-    setPriceValue(value);
+  function handleBookUpdate(name, value) {
+    setBook((prev) => ({ ...prev, [name]: value }));
   }
 
   return (
@@ -133,23 +155,37 @@ function SearchIndividualBookPage({ params }) {
           <TextField
             type="number"
             labelText="Price"
-            updateFunction={handlePriceChange}
-            inputValue={priceValue}
+            name="price"
+            updateFunction={handleBookUpdate}
+            inputValue={book ? book.price : ""}
           />
         </div>
         <div className={styles.amount}>
           <p>Amount:</p>
-          <button className={styles.amountControls} onClick={decreaseAmount}>
+          <button
+            className={styles.amountControls}
+            onClick={() => {
+              if (book.amount > 1) {
+                setBook((prev) => ({ ...prev, amount: prev.amount - 1 }));
+              }
+            }}
+          >
             <FontAwesomeIcon icon={faMinus} />
           </button>
-          <div>{amount}</div>
-          <button className={styles.amountControls} onClick={increaseAmount}>
+          <div>{book ? book.amount : ""}</div>
+          <button
+            className={styles.amountControls}
+            onClick={() =>
+              setBook((prev) => ({ ...prev, amount: prev.amount + 1 }))
+            }
+          >
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>
         <button
           className={styles.confirmButton}
-          disabled={priceValue ? false : true}
+          disabled={book?.price ? false : true}
+          onClick={() => addBook("http://localhost:8000/api/books/create")}
         >
           Confirm
         </button>

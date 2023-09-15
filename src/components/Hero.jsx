@@ -54,6 +54,7 @@ function Hero() {
         </div>
         <div className={styles.outline}></div>
       </div>
+      <div className={styles.blurryOverlay}></div>
     </div>
   );
 }

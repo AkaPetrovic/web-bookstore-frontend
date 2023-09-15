@@ -1,6 +1,9 @@
 .container {
+  display: flex;
+  flex-direction: column;
+  gap: 7rem;
   background-color: white;
-  width: 80%;
+  width: 220rem;
   margin: 3rem auto 0;
   padding: 2rem;
   border-radius: 0.5rem;
@@ -22,19 +25,22 @@
   cursor: pointer;
 }
 
+.selectedOption,
+.otherOptions {
+  width: 25rem;
+}
+
 .selectedOption {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   gap: 1rem;
   border: 2px solid #111;
-  width: 25rem;
 }
 
 .otherOptions {
   position: absolute;
   border-top: none;
-  width: 25rem;
   overflow: hidden;
 }
 
@@ -55,19 +61,76 @@
   border-bottom: 2px solid #111;
 }
 
-.items {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 7rem 0 0 0;
-  gap: 2rem;
+.book {
+  display: inline-block;
+  border: 1px solid black;
+  aspect-ratio: 5 / 7;
+  width: 25rem;
+  margin: 1rem;
 }
 
-.book {
-  border: 1px solid black;
-  width: 25rem;
-  height: 35rem;
+.loadMoreButton {
+  cursor: pointer;
+  background-color: white;
+  font-size: 1.5rem;
+  border: 2px solid #111;
+  width: max-content;
+  padding: 1rem 2rem;
+  align-self: center;
 }
 
 .open {
   transform: translateY(0);
+}
+
+@media screen and (max-width: 2300px) {
+  .container {
+    width: 193rem;
+  }
+}
+
+@media screen and (max-width: 2150px) {
+  .container {
+    width: 166rem;
+  }
+}
+
+@media screen and (max-width: 1850px) {
+  .container {
+    width: 139rem;
+  }
+}
+
+@media screen and (max-width: 1700px) {
+  .container {
+    width: 112rem;
+  }
+}
+
+@media screen and (max-width: 1500px) {
+  .selectedOption,
+  .otherOptions {
+    width: 20rem;
+    font-size: 1.4rem;
+  }
+
+  .container {
+    width: 85rem;
+  }
+}
+
+@media screen and (max-width: 1250px) {
+  .book {
+    width: 18rem;
+  }
+
+  .container {
+    width: 84rem;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .container {
+    width: 64rem;
+  }
 }

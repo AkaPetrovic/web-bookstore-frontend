@@ -114,3 +114,30 @@
   display: flex;
   justify-content: space-between;
 }
+
+@media screen and (max-width: 2000px) {
+  .link {
+    width: 25rem;
+    font-size: 1.8rem;
+  }
+}
+
+@media screen and (max-width: 1700px) {
+  .link {
+    width: 20rem;
+    font-size: 1.6rem;
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .link {
+    width: 15rem;
+  }
+}
+
+@media screen and (max-width: 1100px) {
+  .link {
+    width: 12rem;
+    font-size: 1.4rem;
+  }
+}
