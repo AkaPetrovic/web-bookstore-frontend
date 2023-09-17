@@ -89,6 +89,7 @@ export function CartContextProvider({ children }) {
 
   const context = {
     itemsInCart: itemsInCart,
+    setItemsInCart: setItemsInCart,
     addToCart: addToCart,
     getAmountAvailable: getAmountAvailable,
     increaseAmountByOne: increaseAmountByOne,

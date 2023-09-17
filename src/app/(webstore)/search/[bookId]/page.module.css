@@ -39,7 +39,12 @@
   justify-content: space-between;
 }
 
-.addToBookstoreButton {
+.availableOperations {
+  display: flex;
+  gap: 5rem;
+}
+
+.operationButton {
   display: flex;
   gap: 0.5rem;
   align-items: center;
@@ -89,6 +94,12 @@
   border: 2px solid rgb(17, 17, 17);
   margin: 1rem 0 0 0;
   padding: 0.5rem 0.7rem;
+  transition: all 0.1s linear;
+}
+
+.confirmButton:hover {
+  background-color: #111;
+  color: white;
 }
 
 .additionalInfo button::hover {

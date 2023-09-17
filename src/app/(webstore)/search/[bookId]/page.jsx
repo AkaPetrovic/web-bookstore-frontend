@@ -7,13 +7,18 @@ import {
   faCircleMinus,
   faCirclePlus,
   faMinus,
+  faPenToSquare,
   faPlus,
+  faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import TextField from "@/components/form/TextField";
 import { useEffect, useState } from "react";
 
 function SearchIndividualBookPage({ params }) {
-  const [showAdditionalFields, setShowAdditionalFields] = useState(false);
+  const [showAdditionalFieldsAdd, setShowAdditionalFieldsAdd] = useState(false);
+  const [showAdditionalFieldsEdit, setShowAdditionalFieldsEdit] =
+    useState(false);
+  const [bookExistsInDatabase, setBookExistsInDatabase] = useState(false);
   const [book, setBook] = useState(null);
   const [data, setData] = useState(null);
 
@@ -22,16 +27,45 @@ function SearchIndividualBookPage({ params }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `https://www.googleapis.com/books/v1/volumes/${params.bookId}`
-        );
-        const data = await response.json();
-        if (data) {
-          setData(data);
+      if (authToken) {
+        try {
+          const response = await fetch(
+            `https://www.googleapis.com/books/v1/volumes/${params.bookId}`
+          );
+          const data = await response.json();
+          if (data) {
+            setData(data);
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (authToken) {
+        try {
+          const response = await fetch(
+            `http://localhost:8000/api/books/check?gbooks_id=${params.bookId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setBookExistsInDatabase(data.found);
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
       }
     };
 
@@ -60,7 +94,6 @@ function SearchIndividualBookPage({ params }) {
 
   async function addBook() {
     if (authToken) {
-      console.log(book);
       const response = await fetch("http://localhost:8000/api/books/create", {
         method: "POST",
         headers: {
@@ -70,10 +103,50 @@ function SearchIndividualBookPage({ params }) {
         body: JSON.stringify(book),
       });
 
-      const responseData = await response.json();
-      // const responseData = await response.text();
+      if (response.ok) {
+        // const responseData = await response.json();
+        // console.log(responseData);
+        setBookExistsInDatabase(true);
+      }
+    }
+  }
 
-      console.log(responseData);
+  async function editBook() {
+    if (authToken) {
+      const response = await fetch(
+        `http://localhost:8000/api/books/${params.bookId}/edit`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+          body: JSON.stringify({ price: book.price }),
+        }
+      );
+
+      // const responseData = await response.json();
+      // console.log(responseData);
+    }
+  }
+
+  async function deleteBook() {
+    if (authToken) {
+      const response = await fetch(
+        `http://localhost:8000/api/books/${params.bookId}/delete`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      if (response.ok) {
+        // const responseData = await response.json();
+        // console.log(responseData);
+        setBookExistsInDatabase(false);
+      }
     }
   }
 
@@ -154,73 +227,139 @@ function SearchIndividualBookPage({ params }) {
         ) : null}
       </div>
 
-      {data && userRole === "admin" ? (
-        <button
-          className={styles.addToBookstoreButton}
-          onClick={() => setShowAdditionalFields((prev) => !prev)}
-        >
-          {!showAdditionalFields ? (
-            <FontAwesomeIcon icon={faCirclePlus} className={styles.icon} />
-          ) : (
-            <FontAwesomeIcon icon={faCircleMinus} className={styles.icon} />
-          )}
+      <div className={styles.availableOperations}>
+        {/* Button and additional fields for ADDING a book or increasing the amount in the database */}
+        <div>
+          {data && userRole === "admin" ? (
+            <button
+              className={styles.operationButton}
+              onClick={() => {
+                setShowAdditionalFieldsAdd((prev) => !prev);
+                setShowAdditionalFieldsEdit(false);
+              }}
+            >
+              <FontAwesomeIcon icon={faCirclePlus} className={styles.icon} />
+              <p>Add to bookstore</p>
+            </button>
+          ) : null}
 
-          <p>Add to bookstore</p>
-        </button>
-      ) : null}
-
-      <div
-        className={
-          showAdditionalFields
-            ? `${styles.additionalInfo} ${styles.visible}`
-            : styles.additionalInfo
-        }
-      >
-        <div className={styles.priceInputField}>
-          <TextField
-            type="number"
-            labelText="Price"
-            name="price"
-            updateFunction={handleBookUpdate}
-            inputValue={book ? book.price : ""}
-          />
-        </div>
-        <div className={styles.amount}>
-          <p>Amount:</p>
-          <button
-            className={styles.amountControls}
-            onClick={() => {
-              if (book.amount > 1) {
-                setBook((prev) => ({ ...prev, amount: prev.amount - 1 }));
-              }
-            }}
-          >
-            <FontAwesomeIcon icon={faMinus} />
-          </button>
-          <div>{book ? book.amount : ""}</div>
-          <button
-            className={styles.amountControls}
-            onClick={() =>
-              setBook((prev) => ({ ...prev, amount: prev.amount + 1 }))
+          <div
+            className={
+              showAdditionalFieldsAdd
+                ? `${styles.additionalInfo} ${styles.visible}`
+                : styles.additionalInfo
             }
           >
-            <FontAwesomeIcon icon={faPlus} />
-          </button>
+            {!bookExistsInDatabase ? (
+              <div className={styles.priceInputField}>
+                <TextField
+                  type="number"
+                  labelText="Price"
+                  name="price"
+                  updateFunction={handleBookUpdate}
+                  inputValue={book ? book.price : ""}
+                />
+              </div>
+            ) : null}
+
+            <div className={styles.amount}>
+              <p>Amount:</p>
+              <button
+                className={styles.amountControls}
+                onClick={() => {
+                  if (book.amount > 1) {
+                    setBook((prev) => ({ ...prev, amount: prev.amount - 1 }));
+                  }
+                }}
+              >
+                <FontAwesomeIcon icon={faMinus} />
+              </button>
+              <div>{book ? book.amount : ""}</div>
+              <button
+                className={styles.amountControls}
+                onClick={() =>
+                  setBook((prev) => ({ ...prev, amount: prev.amount + 1 }))
+                }
+              >
+                <FontAwesomeIcon icon={faPlus} />
+              </button>
+            </div>
+            <button
+              className={styles.confirmButton}
+              disabled={
+                !bookExistsInDatabase && book?.price == "" ? true : false
+              }
+              onClick={() => {
+                addBook();
+                setBook({
+                  ...book,
+                  price: "",
+                  amount: 1,
+                });
+              }}
+            >
+              Confirm
+            </button>
+          </div>
         </div>
-        <button
-          className={styles.confirmButton}
-          disabled={book?.price ? false : true}
-          onClick={() => {
-            addBook();
-            setBook({
-              ...book,
-              price: "",
-              amount: 1,
-            });
-          }}
-        >
-          Confirm
-        </button>
+
+        {/* Button for DELETING a book that already exists in the database */}
+        {data && userRole === "admin" && bookExistsInDatabase ? (
+          <div>
+            <button className={styles.operationButton} onClick={deleteBook}>
+              <FontAwesomeIcon icon={faTrashCan} className={styles.icon} />
+              <p>Delete</p>
+            </button>
+          </div>
+        ) : null}
+
+        {/* Button and additional fields for EDITING a book that already exists in the database */}
+        {data && userRole === "admin" && bookExistsInDatabase ? (
+          <div>
+            <button
+              className={styles.operationButton}
+              onClick={() => {
+                setShowAdditionalFieldsEdit((prev) => !prev);
+                setShowAdditionalFieldsAdd(false);
+              }}
+            >
+              <FontAwesomeIcon icon={faPenToSquare} className={styles.icon} />
+              <p>Edit the price</p>
+            </button>
+
+            <div
+              className={
+                showAdditionalFieldsEdit
+                  ? `${styles.additionalInfo} ${styles.visible}`
+                  : styles.additionalInfo
+              }
+            >
+              <div className={styles.priceInputField}>
+                <TextField
+                  type="number"
+                  labelText="Price"
+                  name="price"
+                  updateFunction={handleBookUpdate}
+                  inputValue={book ? book.price : ""}
+                />
+              </div>
+
+              <button
+                className={styles.confirmButton}
+                disabled={book?.price == "" ? true : false}
+                onClick={() => {
+                  editBook();
+                  setBook({
+                    ...book,
+                    price: "",
+                  });
+                }}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        ) : null}
       </div>
     </main>
   );

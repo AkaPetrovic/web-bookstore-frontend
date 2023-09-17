@@ -1,14 +1,57 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import styles from "./page.module.css";
 import CartContext from "@/context/CartContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 
 function Cart() {
-  const { itemsInCart, increaseAmountByOne, decreaseAmountByOne } =
-    useContext(CartContext);
+  const {
+    itemsInCart,
+    setItemsInCart,
+    increaseAmountByOne,
+    decreaseAmountByOne,
+  } = useContext(CartContext);
+  const [purchaseSuccessful, setPurchaseSuccessful] = useState(false);
+
+  const authToken = getCookie("auth_token");
+
+  async function confirmPurchase() {
+    const itemsInCartCompact = itemsInCart.map((item) => ({
+      amount: item.amountInCart,
+      gbooksId: item.gbooksID,
+    }));
+
+    if (authToken) {
+      const response = await fetch("http://localhost:8000/api/books/deduct", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify(itemsInCartCompact),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log(responseData);
+        setItemsInCart([]);
+        setPurchaseSuccessful(true);
+      }
+    }
+  }
+
+  function getCookie(cookieName) {
+    const cookies = document.cookie.split("; ");
+    for (const cookie of cookies) {
+      const [name, value] = cookie.split("=");
+      if (name === cookieName) {
+        return decodeURIComponent(value);
+      }
+    }
+    return null;
+  }
 
   return (
     <main className={styles.cart}>
@@ -46,10 +89,16 @@ function Cart() {
               </div>
             ))}
           </div>
-          <button className={styles.confirmButton}>Confirm purchase</button>
+          <button className={styles.confirmButton} onClick={confirmPurchase}>
+            Confirm purchase
+          </button>
         </>
       ) : (
-        <h1 className={styles.emptyCartMessage}>Cart is currently empty...</h1>
+        <h1 className={styles.emptyCartMessage}>
+          {purchaseSuccessful
+            ? "Successful purchase!"
+            : "Cart is currently empty..."}
+        </h1>
       )}
     </main>
   );
