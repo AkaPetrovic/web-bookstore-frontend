@@ -71,7 +71,7 @@ function LoginPage() {
         </div>
 
         <p>
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link className={styles.link} href="/register">
             Register
           </Link>
