@@ -1,7 +1,6 @@
 .container {
   display: inline-flex;
   flex-direction: column;
-  /* border: 1px solid black; */
   aspect-ratio: 4 / 7;
   width: 25rem;
   margin: 1rem;
@@ -67,4 +66,10 @@
 .addToCartButton:not([disabled]):hover {
   background-color: #111;
   color: white;
+}
+
+@media screen and (max-width: 1250px) {
+  .container {
+    width: 18rem;
+  }
 }
