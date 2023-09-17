@@ -4,46 +4,37 @@ import styles from "./page.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import useSWR, { mutate } from "swr";
+import Book from "@/components/bookstore/Book";
 
 export default function Bookstore() {
   const [skip, setSkip] = useState(0);
-  const [key, setKey] = useState("http://127.0.0.1:8000/api/books/get10");
   const [selectedSortingOption, setSelectedSortingOption] = useState("Default");
   const [dropDownOptionsVisible, setDropDownOptionsVisible] = useState(false);
   const [items, setItems] = useState([]);
 
-  const fetcher = (url, method = "GET", data = null) => {
-    const options = {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: data ? JSON.stringify(data) : null,
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:8000/api/books/get10?skip=${skip}`
+        );
+        const data = await response.json();
+        // console.log(data);
+        if (data) {
+          if (items.length === 0) {
+            setItems(data.books);
+          } else {
+            const newItems = [...items, ...data.books];
+            setItems(newItems);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
-    return fetch(url, options).then((res) => res.json());
-  };
-  const { data, error, isLoading } = useSWR(key, fetcher);
-
-  useEffect(() => {
-    if (data) {
-      if (items.length === 0) {
-        setItems(data.books);
-      } else {
-        const newItems = [...items, ...data.books];
-        setItems(newItems);
-      }
-    }
-  }, [data]);
-
-  useEffect(() => {
-    setKey(`http://127.0.0.1:8000/api/books/get10?skip=${skip}`);
+    fetchData();
   }, [skip]);
-
-  useEffect(() => {
-    mutate(key);
-  }, [key]);
 
   useEffect(() => {
     const sortedItems = [...items];
@@ -91,7 +82,14 @@ export default function Bookstore() {
               onClick={() => setDropDownOptionsVisible(!dropDownOptionsVisible)}
             >
               <p>{selectedSortingOption}</p>
-              <FontAwesomeIcon icon={faAngleDown} />
+              <FontAwesomeIcon
+                icon={faAngleDown}
+                className={
+                  dropDownOptionsVisible
+                    ? `${styles.dropDownIcon} ${styles.rotate180}`
+                    : styles.dropDownIcon
+                }
+              />
             </div>
 
             <div className={styles.otherOptions}>
@@ -158,11 +156,14 @@ export default function Bookstore() {
         {/* All books available for purchase */}
         <div className={styles.items}>
           {items.map((item) => (
-            <div className={styles.book} key={item.id}>
-              {item.name}
-              <br />
-              {item.price}
-            </div>
+            <Book
+              key={item.id}
+              gbooksID={item.gbooks_id}
+              cover={item.cover}
+              name={item.name}
+              amount={item.amount}
+              price={item.price}
+            />
           ))}
         </div>
         {items.length > 0 && items.length % 10 === 0 ? (

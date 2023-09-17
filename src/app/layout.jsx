@@ -1,11 +1,10 @@
-import Navbar from "@/components/navigation/Navbar";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import Footer from "@/components/Footer";
 // Loading the styles for Font Awesome components in the root layout prevents it
 // from loading initial styles (inappropriately large icons)
 import "@fortawesome/fontawesome-svg-core/styles.css";
-import { UserContextProvider } from "../context/UserContext";
+import { CartContextProvider } from "@/context/CartContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +18,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <div className="container">
-          <UserContextProvider>{children}</UserContextProvider>
+          <CartContextProvider>{children}</CartContextProvider>
         </div>
         <Footer />
       </body>

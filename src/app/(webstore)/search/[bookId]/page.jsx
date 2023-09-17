@@ -9,40 +9,48 @@ import {
   faMinus,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import useSWR from "swr";
 import TextField from "@/components/form/TextField";
 import { useEffect, useState } from "react";
 
 function SearchIndividualBookPage({ params }) {
   const [showAdditionalFields, setShowAdditionalFields] = useState(false);
   const [book, setBook] = useState(null);
+  const [data, setData] = useState(null);
 
-  const fetcher = (url, method = "GET", data = null) => {
-    const options = {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: data ? JSON.stringify(data) : null,
+  const userRole = getCookie("logged_user_role");
+  const authToken = getCookie("auth_token");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `https://www.googleapis.com/books/v1/volumes/${params.bookId}`
+        );
+        const data = await response.json();
+        if (data) {
+          setData(data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
 
-    return fetch(url, options).then((res) => res.json());
-  };
-
-  const { data, error, isLoading } = useSWR(
-    `https://www.googleapis.com/books/v1/volumes/${params.bookId}`,
-    fetcher
-  );
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (data && book === null) {
       const authors = data.volumeInfo.authors.join(", ");
+      const cover =
+        data.volumeInfo.imageLinks && data.volumeInfo.imageLinks.smallThumbnail
+          ? data.volumeInfo.imageLinks.smallThumbnail
+          : "/";
 
       setBook({
         name: data.volumeInfo.title,
         authors: authors,
         published_date: data.volumeInfo.publishedDate,
-        cover: data.volumeInfo.imageLinks.smallThumbnail,
+        cover: cover,
         gbooks_id: data.id,
         price: "",
         amount: 1,
@@ -50,23 +58,38 @@ function SearchIndividualBookPage({ params }) {
     }
   }, [data]);
 
-  async function addBook(url) {
-    console.log(book);
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(book),
-    });
+  async function addBook() {
+    if (authToken) {
+      console.log(book);
+      const response = await fetch("http://localhost:8000/api/books/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify(book),
+      });
 
-    const responseData = await response.json();
+      const responseData = await response.json();
+      // const responseData = await response.text();
 
-    console.log(responseData);
+      console.log(responseData);
+    }
   }
 
   function handleBookUpdate(name, value) {
     setBook((prev) => ({ ...prev, [name]: value }));
+  }
+
+  function getCookie(cookieName) {
+    const cookies = document.cookie.split("; ");
+    for (const cookie of cookies) {
+      const [name, value] = cookie.split("=");
+      if (name === cookieName) {
+        return decodeURIComponent(value);
+      }
+    }
+    return null;
   }
 
   return (
@@ -99,7 +122,9 @@ function SearchIndividualBookPage({ params }) {
           ) : null}
         </div>
 
-        {data && data.volumeInfo.imageLinks.smallThumbnail ? (
+        {data &&
+        data.volumeInfo.imageLinks &&
+        data.volumeInfo.imageLinks.smallThumbnail ? (
           <img
             className={styles.bookImage}
             src={data.volumeInfo.imageLinks.smallThumbnail}
@@ -129,7 +154,7 @@ function SearchIndividualBookPage({ params }) {
         ) : null}
       </div>
 
-      {!isLoading ? (
+      {data && userRole === "admin" ? (
         <button
           className={styles.addToBookstoreButton}
           onClick={() => setShowAdditionalFields((prev) => !prev)}
@@ -185,7 +210,14 @@ function SearchIndividualBookPage({ params }) {
         <button
           className={styles.confirmButton}
           disabled={book?.price ? false : true}
-          onClick={() => addBook("http://localhost:8000/api/books/create")}
+          onClick={() => {
+            addBook();
+            setBook({
+              ...book,
+              price: "",
+              amount: 1,
+            });
+          }}
         >
           Confirm
         </button>

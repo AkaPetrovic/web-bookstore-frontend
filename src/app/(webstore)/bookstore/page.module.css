@@ -61,14 +61,6 @@
   border-bottom: 2px solid #111;
 }
 
-.book {
-  display: inline-block;
-  border: 1px solid black;
-  aspect-ratio: 5 / 7;
-  width: 25rem;
-  margin: 1rem;
-}
-
 .loadMoreButton {
   cursor: pointer;
   background-color: white;
@@ -81,6 +73,14 @@
 
 .open {
   transform: translateY(0);
+}
+
+.dropDownIcon {
+  transform: rotate(0);
+  transition: transform 0.3s ease-in-out;
+}
+.rotate180 {
+  transform: rotate(180deg);
 }
 
 @media screen and (max-width: 2300px) {

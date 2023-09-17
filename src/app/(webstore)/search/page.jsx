@@ -54,7 +54,7 @@ export default function Search() {
             onChange={handleInputChange}
             onFocus={handleBorderToggle}
             onBlur={handleBorderToggle}
-            placeholder="Enter books title here"
+            placeholder="Enter book's title here"
           />
           <div
             className={`${styles.searchFieldBorder} + ${

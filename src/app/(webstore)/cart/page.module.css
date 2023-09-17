@@ -1,0 +1,63 @@
+.cart {
+  width: 50%;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 10px 10px 22px #dbdbdb;
+  padding: 2rem;
+}
+
+.itemInCart {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem 0 1rem 0;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.lastItemInCart {
+  border: none;
+}
+
+.amount {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
+  width: 10rem;
+}
+
+.amountControls {
+  border: none;
+  background-color: white;
+  cursor: pointer;
+}
+
+.title {
+  font-size: 1.8rem;
+  flex-grow: 1;
+}
+
+.totalPrice {
+  font-size: 1.5rem;
+  width: 15rem;
+}
+
+.confirmButton {
+  display: block;
+  background-color: white;
+  font-size: 1.5rem;
+  border: none;
+  margin: 1rem 2.5rem 0 auto;
+  padding: 0.5rem 0.7rem;
+  transition: all 0.1s linear;
+}
+
+.confirmButton:hover {
+  background-color: #111;
+  color: white;
+}
+
+.emptyCartMessage {
+  font-size: 2.5rem;
+}
